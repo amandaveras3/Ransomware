@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incidente de Ransomware no STJ - 2020</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94560;
+            --accent-light: #ff6b88;
+            --text: #eaeaea;
+            --text-dim: #a0a0a0;
+            --card-bg: #0f3460;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        #cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent-light);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            opacity: 0.5;
+        }
+
+        #cursor.hover {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(233, 69, 96, 0.1);
+            animation: float 25s infinite;
+            border-radius: 50%;
+        }
+
+        .bg-animation span:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 20s; }
+        .bg-animation span:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; animation-delay: 0s; animation-duration: 18s; }
+        .bg-animation span:nth-child(5) { left: 50%; animation-delay: 3s; }
+        .bg-animation span:nth-child(6) { left: 60%; animation-delay: 7s; }
+        .bg-animation span:nth-child(7) { left: 70%; animation-delay: 5s; animation-duration: 22s; }
+        .bg-animation span:nth-child(8) { left: 80%; animation-delay: 9s; }
+        .bg-animation span:nth-child(9) { left: 90%; animation-delay: 1s; animation-duration: 19s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        header {
+            background: var(--secondary);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-2);
+            opacity: 0.1;
+            animation: slide 3s infinite;
+        }
+
+        @keyframes slide {
+            0%, 100% { left: -100%; }
+            50% { left: 100%; }
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        header .meta {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        nav {
+            background: var(--secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::before {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: var(--secondary);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section:hover {
+            box-shadow: 0 12px 48px rgba(233, 69, 96, 0.2);
+            transform: translateY(-5px);
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-light);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-2);
+            border-radius: 2px;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--accent);
+        }
+
+        section p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        section ul, section ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .alert {
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(255, 107, 136, 0.1));
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.4); }
+            50% { box-shadow: 0 0 20px 10px rgba(233, 69, 96, 0); }
+        }
+
+        .alert strong {
+            color: var(--accent-light);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: var(--gradient-1);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background: rgba(233, 69, 96, 0.1);
+            transform: scale(1.01);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-3);
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(79, 172, 254, 0.3);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent-light);
+        }
+
+        .card p {
+            color: var(--text-dim);
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient-2);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            margin-bottom: 3rem;
+            position: relative;
+            width: 45%;
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 55%;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 4px solid var(--secondary);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -60px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -60px;
+        }
+
+        .timeline-content {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(233, 69, 96, 0.3);
+        }
+
+        .timeline-content h3 {
+            margin-top: 0;
+            color: var(--accent-light);
+        }
+
+        .evidence-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 2px dashed var(--accent);
+        }
+
+        .evidence-section h3 {
+            text-align: center;
+            color: var(--accent-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .evidence-item {
+            background: var(--secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .evidence-item:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(233, 69, 96, 0.4);
+        }
+
+        .evidence-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--gradient-1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        footer {
+            background: var(--secondary);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        footer p {
+            color: var(--text-dim);
+        }
+
+        footer a {
+            color: var(--accent-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        #scrollTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        #scrollTop.visible {
+            opacity: 1;
+        }
+
+        #scrollTop:hover {
+            transform: scale(1.1) rotate(360deg);
+            box-shadow: 0 8px 24px rgba(233, 69, 96, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                margin-left: 40px !important;
+                text-align: left !important;
+            }
+
+            .timeline-item::before {
+                left: -30px !important;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(233, 69, 96, 0.3) 0%, rgba(233, 69, 96, 0.3) 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 90%;
+            padding: 0 0.2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--gradient-2);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <header>
+        <h1>🔒 Incidente de Ransomware no STJ em 2020</h1>
+        <p class="subtitle">O maior ataque cibernético contra uma instituição pública brasileira</p>
+        <div class="meta">
+            <span class="badge">2025</span>
+            <span class="badge">Segurança da Informação</span>
+            <span class="badge">Ransomware</span>
+        </div>
+        <div class="meta" style="margin-top: 1rem;">
+            <strong>Aluna:</strong> Amanda Félix Veras | 
+            <strong>Turma:</strong> 2° Desenvolvimento de Sistemas | 
+            <strong>Data:</strong> 07/10/2025
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#introducao">Introdução</a></li>
+            <li><a href="#fases">Fases do Ataque</a></li>
+            <li><a href="#impacto">Impacto</a></li>
+            <li><a href="#controles">Controles</a></li>
+            <li><a href="#licoes">Lições</a></li>
+            <li><a href="#provas">Provas</a></li>
+            <li><a href="#conclusao">Conclusão</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="introducao" style="animation-delay: 0.1s;">
+            <h2>📋 Introdução</h2>
+            <p>
+                No dia <span class="highlight">3 de novembro de 2020</span>, o <strong>Superior Tribunal de Justiça (STJ)</strong> foi alvo de um ataque cibernético de alta complexidade, que resultou na interrupção temporária de suas atividades institucionais. O episódio foi oficialmente reconhecido pela Presidência do Tribunal, no Comunicado de 19 de novembro de 2020, como <em>"o pior ataque cibernético já empreendido contra uma instituição pública brasileira, em termos de dimensão e complexidade"</em>.
+            </p>
+            <p>
+                O incidente provocou a <strong>indisponibilidade dos sistemas judiciais</strong>, paralisando temporariamente julgamentos, sessões virtuais e o acesso a bancos de dados processuais. A resposta ao ataque envolveu isolamento completo da rede, análise forense digital e reconstrução total do ambiente computacional, com o apoio de diversas instituições especializadas.
+            </p>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">26h</div>
+                    <div class="stat-label">Tempo de Isolamento da Rede</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-2);">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Sistemas Comprometidos</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-3);">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Dias de Paralisação</div>
+                </div>
+            </div>
+
+            <div class="alert">
+                <strong>⚠️ Atenção:</strong> Embora o STJ não tenha confirmado publicamente a natureza exata do malware, indícios técnicos e a metodologia empregada sugerem tratar-se de um <strong>ataque de ransomware direcionado (targeted ransomware attack)</strong>, caracterizado pela criptografia de sistemas críticos e tentativa de extorsão mediante resgate de dados.
+            </div>
+
+            <h3>🤝 Instituições Envolvidas na Resposta</h3>
+            <div class="cards">
+                <div class="card">
+                    <h3>🚔 Polícia Federal</h3>
+                    <p>Investigação criminal e análise forense digital do incidente.</p>
+                </div>
+                <div class="card">
+                    <h3>🎖️ ComDCiber</h3>
+                    <p>Comando de Defesa Cibernética do Exército Brasileiro - Suporte técnico especializado.</p>
+                </div>
+                <div class="card">
+                    <h3>💻 Serpro</h3>
+                    <p>Serviço Federal de Processamento de Dados - Apoio em infraestrutura.</p>
+                </div>
+                <div class="card">
+                    <h3>🔐 Microsoft</h3>
+                    <p>Suporte técnico em segurança e recuperação de sistemas.</p>
+                </div>
+                <div class="card">
+                    <h3>🛡️ Atos Brasil</h3>
+                    <p>Consultoria especializada em cibersegurança.</p>
+                </div>
+                <div class="card">
+                    <h3>🔴 Redbelt Security</h3>
+                    <p>Empresa especializada em resposta a incidentes de segurança.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="fases" style="animation-delay: 0.2s;">
+            <h2>🎯 Fases Técnicas do Ataque</h2>
+            <p>
+                A análise do caso do STJ (2020) permite a reconstrução de um ciclo de ataque cibernético conforme os modelos consagrados pelo <strong>MITRE ATT&CK Framework</strong> e pela <strong>Cyber Kill Chain (Lockheed Martin)</strong>. As etapas típicas desse tipo de ataque são descritas a seguir:
+            </p>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>1️⃣ Reconhecimento</h3>
+                        <p><strong>Reconnaissance</strong></p>
+                        <p>Os atacantes realizaram varredura de rede (network scanning) e coleta de informações públicas e internas sobre a infraestrutura do STJ, identificando possíveis vulnerabilidades e pontos de acesso remoto (RDP, VPN, servidores expostos).</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>2️⃣ Intrusão / Acesso Inicial</h3>
+                        <p><strong>Initial Access</strong></p>
+                        <p>Possível exploração de vulnerabilidades conhecidas (como RDP desprotegido ou falhas de autenticação) ou credenciais comprometidas obtidas por phishing. O acesso inicial visou servidores internos e sistemas administrativos.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>3️⃣ Persistência e Escalonamento</h3>
+                        <p><strong>Persistence / Privilege Escalation</strong></p>
+                        <p>Uma vez dentro do ambiente, os atacantes obtiveram credenciais privilegiadas (administrator/root) e implantaram mecanismos de persistência, permitindo controle remoto prolongado do ambiente.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>4️⃣ Movimentação Lateral</h3>
+                        <p><strong>Lateral Movement</strong></p>
+                        <p>Uso de protocolos internos (SMB, PowerShell Remoting, PsExec) para se mover entre servidores e estações de trabalho, expandindo o alcance do ataque a domínios críticos e bancos de dados judiciais.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>5️⃣ Impacto / Criptografia</h3>
+                        <p><strong>Impact / Encryption</strong></p>
+                        <p>Diversos sistemas foram inutilizados, evidenciando execução de payloads de ransomware ou sabotagem de arquivos essenciais. O ambiente foi isolado por 26 horas para preservar vestígios digitais.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>6️⃣ Exfiltração de Dados</h3>
+                        <p><strong>Exfiltration</strong></p>
+                        <p>Embora o comunicado oficial não confirme vazamento, é prática comum em ataques modernos (double extortion) a cópia prévia de dados sigilosos para forçar o pagamento de resgate.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>7️⃣ Resposta e Recuperação</h3>
+                        <p><strong>Response / Recovery</strong></p>
+                        <p>O STJ, após perícia forense, reconstruiu integralmente sua rede, implementou autenticação multifator (MFA) e revisou políticas de segurança e conformidade à LGPD.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impacto" style="animation-delay: 0.3s;">
+            <h2>💥 Impacto Institucional e Operacional</h2>
+            <p>
+                Os principais impactos observados e reportados foram significativos, afetando não apenas a operação do STJ, mas também a confiança na segurança das instituições públicas brasileiras:
+            </p>
+
+            <div class="cards">
+                <div class="card">
+                    <h3>⚖️ Sistemas Judiciais</h3>
+                    <p>Indisponibilidade sistêmica dos ambientes de processamento judicial eletrônico (PJe e SEI).</p>
+                </div>
+                <div class="card">
+                    <h3>🚫 Julgamentos</h3>
+                    <p>Suspensão de julgamentos e sessões virtuais entre 3 e 10 de novembro de 2020.</p>
+                </div>
+                <div class="card">
+                    <h3>🌐 Rede Interna</h3>
+                    <p>Interrupção do tráfego de rede interna e bloqueio de acessos remotos.</p>
+                </div>
+                <div class="card">
+                    <h3>🔓 Dados Sensíveis</h3>
+                    <p>Risco potencial de comprometimento de dados judiciais e pessoais.</p>
+                </div>
+                <div class="card">
+                    <h3>💰 Custos Elevados</h3>
+                    <p>Custos de reconstrução e resposta, envolvendo múltiplos órgãos públicos e empresas privadas.</p>
+                </div>
+                <div class="card">
+                    <h3>🔧 Reestruturação</h3>
+                    <p>Revisão estrutural da política de segurança e arquitetura de TI, incluindo MFA e reengenharia de rede.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="controles" style="animation-delay: 0.4s;">
+            <h2>🛡️ Controles de Segurança Recomendados</h2>
+            <p>
+                A análise técnica do caso evidencia que determinadas medidas de segurança, se implementadas previamente, poderiam mitigar a probabilidade e o impacto do incidente. Essas medidas estão alinhadas aos controles definidos na norma <strong>ISO/IEC 27002:2022</strong> e ao <strong>NIST Cybersecurity Framework (CSF)</strong>.
+            </p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoria de Controle</th>
+                            <th>Recomendações Técnicas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Controle de Acesso e Autenticação</strong></td>
+                            <td>Implantação de autenticação multifator (MFA) para todos os acessos administrativos e remotos; revisão periódica de privilégios e desativação de contas inativas.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Segmentação de Rede</strong></td>
+                            <td>Isolamento de sistemas críticos e servidores de produção em redes segregadas (microsegmentação); implementação de firewalls internos e VLANs de segurança.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gestão de Vulnerabilidades e Patches</strong></td>
+                            <td>Processo contínuo de atualização e correção de falhas conhecidas (patch management); priorização de CVEs críticas.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monitoramento e Resposta a Incidentes (SOC / SIEM)</strong></td>
+                            <td>Implantação de um Security Operations Center (SOC) com ferramentas de detecção e resposta a incidentes (SIEM/EDR) e alertas de comportamento anômalo.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup Seguro (Air-Gapped)</strong></td>
+                            <td>Cópias de segurança regulares, armazenadas em ambientes isolados (air-gapped), testadas periodicamente.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Treinamento e Conscientização</strong></td>
+                            <td>Capacitação contínua de servidores e magistrados sobre engenharia social e boas práticas de segurança da informação.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gestão de Continuidade de Negócios (BCP/DRP)</strong></td>
+                            <td>Desenvolvimento de planos formais de continuidade e recuperação de desastres (Business Continuity Plan / Disaster Recovery Plan).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Criptografia e Proteção de Dados</strong></td>
+                            <td>Criptografia de dados em repouso e em trânsito; uso de HSM (Hardware Security Module) para proteção de chaves.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Auditoria e Testes de Penetração</strong></td>
+                            <td>Execução regular de pentests, auditorias de segurança e avaliações de conformidade à LGPD.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="licoes" style="animation-delay: 0.5s;">
+            <h2>📚 Lições Aprendidas</h2>
+            
+            <div class="cards">
+                <div class="card">
+                    <h3>🔐 Prevenção Proativa</h3>
+                    <p>A prevenção proativa é o elemento mais eficaz na mitigação de ataques cibernéticos. Investir em segurança antes do incidente é sempre mais econômico e efetivo.</p>
+                </div>
+                <div class="card">
+                    <h3>🌐 Segmentação de Redes</h3>
+                    <p>A segmentação de redes e autenticação reforçada são essenciais para conter a propagação de malware e limitar o raio de ação dos atacantes.</p>
+                </div>
+                <div class="card">
+                    <h3>🤝 Cooperação Institucional</h3>
+                    <p>A integração entre órgãos públicos e instituições privadas de cibersegurança (como ocorreu no caso do STJ) é um exemplo de resposta coordenada bem-sucedida.</p>
+                </div>
+                <div class="card">
+                    <h3>📋 Conformidade Contínua</h3>
+                    <p>A adequação contínua à LGPD e às normas de segurança (ISO 27001, NIST CSF) é fundamental para a proteção de dados sensíveis.</p>
+                </div>
+                <div class="card">
+                    <h3>💬 Transparência</h3>
+                    <p>A transparência institucional do STJ ao divulgar o incidente contribuiu para a maturidade da segurança digital no setor público brasileiro.</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Resiliência</h3>
+                    <p>O foco deve ser a resiliência e a capacidade de resposta, pois "não é questão de se, mas de quando ocorrerá o próximo ataque".</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="provas" class="evidence-section" style="animation-delay: 0.6s;">
+            <h3>📂 Área de Provas e Evidências</h3>
+            <p style="text-align: center; margin-bottom: 2rem;">
+                Esta seção documenta as principais evidências e fontes relacionadas ao incidente de ransomware no STJ.
+            </p>
+
+            <div class="evidence-grid">
+                <div class="evidence-item">
+                    <img src="./images/proof_1.png" alt="Lista de arquivos vazados" style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4>Arquivos Vazados</h4>
+                    <p>Captura de tela mostrando a lista de arquivos supostamente vazados.</p>
+                </div>
+
+                <div class="evidence-item">
+                    <img src="./images/proof_2.png" alt="Tweet CyberTeam TSE" style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4>Tweet do CyberTeam (TSE)</h4>
+                    <p>Publicação do grupo CyberTeam sobre vazamento de dados do TSE.</p>
+                </div>
+
+                <div class="evidence-item">
+                    <img src="./images/proof_3.png" alt="Tweet CyberTeam Bancos de Dados" style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4>Tweet do CyberTeam (Bancos de Dados)</h4>
+                    <p>Publicação do grupo CyberTeam detalhando bancos de dados acessados.</p>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-icon">📄</div>
+                    <h4>Comunicado Oficial STJ</h4>
+                    <p>Comunicado da Presidência do STJ sobre o ataque cibernético (19/11/2020)</p>
+                    <a href="https://www.stj.jus.br/sites/portalp/Paginas/Comunicacao/Noticias/19112020-Comunicado-da-Presidencia-do-STJ.aspx" target="_blank" style="color: var(--accent-light);">Acessar Fonte</a>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-icon">📘</div>
+                    <h4>NIST Framework</h4>
+                    <p>Framework for Improving Critical Infrastructure Cybersecurity (Version 1.1)</p>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">National Institute of Standards and Technology, 2018</p>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-icon">🔐</div>
+                    <h4>ISO/IEC 27002:2022</h4>
+                    <p>Information security, cybersecurity and privacy protection – Controls</p>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Norma internacional de segurança</p>
+                </div>
+            </div>
+
+            <div class="alert" style="margin-top: 2rem;">
+                <strong>📌 Nota:</strong> Todas as informações apresentadas neste site são baseadas em fontes oficiais e públicas. Dados sensíveis ou classificados não foram divulgados, em conformidade com as políticas de segurança institucional.
+            </div>
+        </section>
+
+        <section id="conclusao" style="animation-delay: 0.7s;">
+            <h2>✅ Conclusão</h2>
+            <p>
+                O incidente ocorrido no STJ em 2020 evidencia a <strong>crescente sofisticação dos ataques de ransomware</strong> contra órgãos públicos e a necessidade urgente de uma cultura de segurança da informação institucionalizada.
+            </p>
+            <p>
+                A resposta eficaz do Tribunal — incluindo o isolamento imediato da rede, a cooperação com órgãos de defesa cibernética e a reestruturação da arquitetura de TI — demonstra <span class="highlight">maturidade operacional</span>, porém também ressalta a importância de políticas preventivas e investimentos contínuos em segurança digital.
+            </p>
+            <p>
+                O caso reforça a máxima em segurança cibernética: <em>"não é questão de se, mas de quando ocorrerá o próximo ataque"</em>, e portanto, o foco deve ser a <strong>resiliência</strong> e a <strong>capacidade de resposta</strong>.
+            </p>
+
+            <div class="alert">
+                <strong>🎯 Mensagem Final:</strong> A segurança cibernética não é um produto, mas um processo contínuo que exige vigilância constante, investimento adequado e colaboração entre todos os stakeholders. O caso do STJ serve como um alerta e um exemplo para todas as instituições públicas e privadas do Brasil.
+            </div>
+        </section>
+
+        <section style="animation-delay: 0.8s;">
+            <h2>📚 Referências Bibliográficas</h2>
+            <ul>
+                <li>
+                    <strong>SUPERIOR TRIBUNAL DE JUSTIÇA.</strong> Comunicado da Presidência sobre o ataque cibernético ao STJ. Brasília, 19 nov. 2020. Disponível em: 
+                    <a href="https://www.stj.jus.br/sites/portalp/Paginas/Comunicacao/Noticias/19112020-Comunicado-da-Presidencia-do-STJ.aspx" target="_blank">
+                        https://www.stj.jus.br/sites/portalp/Paginas/Comunicacao/Noticias/19112020-Comunicado-da-Presidencia-do-STJ.aspx
+                    </a>. Acesso em: 07 de out. 2025.
+                </li>
+                <li>
+                    <strong>NIST.</strong> Framework for Improving Critical Infrastructure Cybersecurity (Version 1.1). Gaithersburg: National Institute of Standards and Technology, 2018.
+                </li>
+                <li>
+                    <strong>ISO/IEC 27002:2022.</strong> Information security, cybersecurity and privacy protection – Controls.
+                </li>
+                <li>
+                    <strong>CERT.br.</strong> Relatório de Incidentes de Segurança em Redes Governamentais. NIC.br, 2021.
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Trabalho Acadêmico sobre Segurança da Informação</p>
+        <p>Desenvolvido por <strong>Amanda Félix Veras</strong> - 2° Desenvolvimento de Sistemas</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            Este site foi criado exclusivamente para fins educacionais e acadêmicos.
+        </p>
+    </footer>
+
+    <button id="scrollTop" title="Voltar ao topo">↑</button>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        const cursorFollower = document.getElementById('cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 100);
+        });
+
+        const interactiveElements = document.querySelectorAll('a, button, .card, .timeline-content, .evidence-item, nav a, th, tr');
+        
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        const scrollTopBtn = document.getElementById('scrollTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.color = '';
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.style.color = 'var(--accent-light)';
+                }
+            });
+        });
+
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-animation');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        document.querySelectorAll('.card, .evidence-item, .stat-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(233, 69, 96, 0.5)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s ease-out';
+                ripple.style.pointerEvents = 'none';
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        console.log('%c🔒 Incidente de Ransomware no STJ - 2020', 'color: #e94560; font-size: 20px; font-weight: bold;');
+        console.log('%cTrabalho desenvolvido por Amanda Félix Veras', 'color: #a0a0a0; font-size: 12px;');
+        console.log('%cSegurança da Informação | 2° Desenvolvimento de Sistemas', 'color: #a0a0a0; font-size: 12px;');
+    </script>
+</body>
+</html>
